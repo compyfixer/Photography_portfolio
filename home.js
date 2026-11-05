@@ -1,62 +1,37 @@
 const categoriesContainer = document.getElementById('categories');
 
-const categories = [
-    {
-        name: 'film',
-        title: 'Film Photography',
-        page: 'film.html'
-    },
-    {
-        name: 'wildlife',
-        title: 'Wildlife',
-        page: 'wildlife.html'
-    },
-    {
-        name: 'landscape',
-        title: 'Landscape',
-        page: 'landscape.html'
-    },
-    {
-        name: 'portrait',
-        title: 'Portrait',
-        page: 'portrait.html'
-    },
-    {
-       name: 'general',
-       title: 'General',
-        page: 'general.html'
-    }
-];
-
+// The category list and thumbnails are generated live by categories.php/category.php/thumb.php
+// from the images/ folders - no build step needed.
 async function loadCategories() {
+    let categories = [];
+    try {
+        const categoriesResponse = await fetch('categories.php');
+        if (categoriesResponse.ok) {
+            categories = await categoriesResponse.json();
+        }
+    } catch (e) {
+        console.error('Error loading categories.php:', e);
+    }
+
+    if (categories.length === 0) {
+        categoriesContainer.innerHTML = '<p class="placeholder-message">No categories found. Add a folder under images/.</p>';
+        return;
+    }
+
     for (const category of categories) {
         try {
-            // Check if images exist for this category
-            const response = await fetch(`images/${category.name}/thumbnails/`);
-            const thumbnailsExist = response.ok;
-            
             // Get list of images
             let imageFiles = [];
             try {
-                const files = await fetch(`categories/${category.name}.json`);
+                const files = await fetch(`category.php?cat=${encodeURIComponent(category.name)}`);
                 if (files.ok) {
                     imageFiles = await files.json();
                 }
-            } catch (e) {
-                // Fallback: try to read from main images.json if it's film category
-                if (category.name === 'film') {
-                    try {
-                        const filmFiles = await fetch('images.json');
-                        if (filmFiles.ok) {
-                            imageFiles = await filmFiles.json();
-                        }
-                    } catch (err) {}
-                }
-            }
+            } catch (e) {}
             
             const categoryCard = document.createElement('a');
             categoryCard.className = 'category-card';
-            categoryCard.href = category.page;
+            categoryCard.href = `gallery.html?cat=${encodeURIComponent(category.name)}`;
             
             const previewDiv = document.createElement('div');
             previewDiv.className = 'category-preview';
@@ -65,7 +40,7 @@ async function loadCategories() {
             const previewCount = Math.min(imageFiles.length, 5);
             for (let i = 0; i < previewCount; i++) {
                 const img = document.createElement('img');
-                img.src = `images/${category.name}/thumbnails/${imageFiles[i]}`;
+                img.src = `thumb.php?cat=${encodeURIComponent(category.name)}&file=${encodeURIComponent(imageFiles[i])}`;
                 img.alt = imageFiles[i];
                 img.loading = 'lazy';
                 previewDiv.appendChild(img);
@@ -82,10 +57,17 @@ async function loadCategories() {
             
             const infoDiv = document.createElement('div');
             infoDiv.className = 'category-info';
-            infoDiv.innerHTML = `
-                <h2 class="category-name">${category.title}</h2>
-                <p class="category-count">${imageFiles.length} ${imageFiles.length === 1 ? 'photo' : 'photos'}</p>
-            `;
+
+            const nameHeading = document.createElement('h2');
+            nameHeading.className = 'category-name';
+            nameHeading.textContent = category.title;
+
+            const countPara = document.createElement('p');
+            countPara.className = 'category-count';
+            countPara.textContent = `${imageFiles.length} ${imageFiles.length === 1 ? 'photo' : 'photos'}`;
+
+            infoDiv.appendChild(nameHeading);
+            infoDiv.appendChild(countPara);
             
             categoryCard.appendChild(previewDiv);
             categoryCard.appendChild(infoDiv);
@@ -98,3 +80,4 @@ async function loadCategories() {
 }
 
 loadCategories();
+

@@ -10,7 +10,7 @@ echo ""
 
 # Step 1: Update category JSON files
 echo "Step 1: Updating category JSON files..."
-node update-images.js
+node update-categories.js
 if [ $? -ne 0 ]; then
     echo "❌ Error updating categories"
     exit 1

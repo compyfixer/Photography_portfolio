@@ -1,0 +1,22 @@
+[
+  {
+    "name": "film",
+    "title": "Film"
+  },
+  {
+    "name": "general",
+    "title": "General"
+  },
+  {
+    "name": "landscape",
+    "title": "Landscape"
+  },
+  {
+    "name": "portrait",
+    "title": "Portrait"
+  },
+  {
+    "name": "wildlife",
+    "title": "Wildlife"
+  }
+]
