@@ -65,7 +65,7 @@ main {
     overflow: hidden;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
     gap: 4px;
     background: #e0e0e0;
 }

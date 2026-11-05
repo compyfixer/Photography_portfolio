@@ -36,8 +36,8 @@ async function loadCategories() {
             const previewDiv = document.createElement('div');
             previewDiv.className = 'category-preview';
             
-            // Show up to 5 thumbnail images
-            const previewCount = Math.min(imageFiles.length, 5);
+            // Show up to 6 thumbnail images (fills the 3x2 preview grid exactly)
+            const previewCount = Math.min(imageFiles.length, 6);
             for (let i = 0; i < previewCount; i++) {
                 const img = document.createElement('img');
                 img.src = `thumb.php?cat=${encodeURIComponent(category.name)}&file=${encodeURIComponent(imageFiles[i])}`;
